@@ -1,0 +1,31 @@
+<html>
+<head></head>
+<body>
+    <title>Music Xplorer</title>
+    <p>Logo</p>
+    <img src='MusicXplorerLogo.PNG' alt="logo" width="200" height="200">
+    <script>
+    const element = document.querySelector('.chatElement')
+    window.watsonAssistantChatOptions = {
+        integrationID: "98e929fb-81df-47e9-b8fe-f86c9d7cf722", // The ID of this integration.
+        region: "us-south", // The region your integration is hosted in.
+        serviceInstanceID: "f551a468-4c0f-490c-ab56-11e118020660", // The ID of your service instance.
+        element: element,
+        hideCloseButton: true,
+        showLauncher: false,
+        openChatByDefault: true,
+        onLoad: function(instance) {
+            instance.updateCSSVariables({
+                'BASE-font-family': '"Times New Roman", Times, serif'
+            });
+            instance.render();
+        }
+    };
+    setTimeout(function(){
+        const t=document.createElement('script');
+        t.src="https://web-chat.global.assistant.watson.appdomain.cloud/loadWatsonAssistantChat.js";
+        document.head.appendChild(t);
+    });
+    </script>
+</body>
+</html>
