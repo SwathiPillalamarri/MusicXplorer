@@ -39,6 +39,7 @@
       </script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>
     <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+    <p id="demo"></p>
     <script>
       (function() {
 
@@ -82,7 +83,61 @@
         var access_token = params.access_token,
             state = params.state,
             storedState = localStorage.getItem(stateKey);
+              $.ajax({
+                url: 'https://api.spotify.com/v1/recommendations?seed_genres=country&valence=0&energy=.5&limit=20&market=US',
+                type: 'GET',
+                dataType: 'JSON',
+                headers: {
+                  'Authorization': 'Bearer ' + access_token
+                },
+                success: function(response) {
+               var obj =JSON.parse(JSON.stringify(response));
+               console.log(obj);
+                document.getElementById("demo").innerHTML = obj.tracks[0].uri;
+                var track1 = obj.tracks[0].uri;
+                  $.ajax({
+                             url: 'https://api.spotify.com/v1/users/ryleefra/playlists',
+                              type: 'POST',
+                              dataType: 'JSON',
+                        headers: {
 
+                          'Authorization': 'Bearer ' + access_token,
+
+                          'Content-Type': 'application/json'
+                        },
+                        data: JSON.stringify({'name': 'Example Playlist'}),
+                      
+                        success: function(response){
+                          var i=0;
+                          var tracks = 'uris=';
+                          for(i=0; i<20; i++){
+                            tracks += obj.tracks[i].uri+',';
+                          }
+                        
+                          var playlist = '2If4YggzwIw1NZFmEoO8Zb';
+                           console.log(JSON.stringify(response));
+                             $.ajax({
+                                   url: 'https://api.spotify.com/v1/users/ryleefra/playlists/' +playlist +'/tracks?' + tracks,
+                                    type: 'POST',
+                                    dataType: 'JSON',
+                              headers: {
+
+                                'Authorization': 'Bearer ' + access_token,
+
+                                'Content-Type': 'application/json'
+                              },
+                            
+                              success: function(response){
+                              
+                                 console.log(JSON.stringify(response));
+                              }
+                              })
+                        }
+                        })
+                   console.log(JSON.stringify(response));
+                }
+            
+            })
         if (access_token && (state == null || state !== storedState)) {
           alert('There was an error during the authentication');
         } else {
@@ -94,6 +149,7 @@
                   'Authorization': 'Bearer ' + access_token
                 },
                 success: function(response) {
+                   console.log(JSON.stringify(response));
                   userProfilePlaceholder.innerHTML = userProfileTemplate(response);
                   const element = document.querySelector('.chatElement')
                 window.watsonAssistantChatOptions = {
@@ -124,7 +180,7 @@
               $('#login').show();
               $('#loggedin').hide();
           }
-
+ 
           document.getElementById('login-button').addEventListener('click', function() {
 
             var client_id = 'f4c692875fc546129664e90e720610a6'; // Your client id
@@ -133,7 +189,7 @@
             var state = generateRandomString(16);
 
             localStorage.setItem(stateKey, state);
-            var scope = 'user-read-private user-read-email';
+            var scope = 'user-read-private user-read-email playlist-modify-public';
 
             var url = 'https://accounts.spotify.com/authorize';
             url += '?response_type=token';
@@ -141,8 +197,8 @@
             url += '&scope=' + encodeURIComponent(scope);
             url += '&redirect_uri=' + encodeURIComponent(redirect_uri);
             url += '&state=' + encodeURIComponent(state);
-
             window.location = url;
+      
           }, false);
         }
       })();
