@@ -93,11 +93,12 @@
         var energy = '.5';
         var danceability ='';
         var instrumentalness = '';
-        var liveness = '';
+        var liveness = '1';
         var loudness = '';
         var popularity = '';
         var speechiness = '';
         var tempo = '';
+        var acousticness ='1';
       //  queryMap.set('seedGenre', 'country');
         queryMap.set('valence', valence);
         queryMap.set('energy', energy);
@@ -107,19 +108,22 @@
         queryMap.set('popularity', popularity);
         queryMap.set('speechiness', speechiness);
         queryMap.set('tempo', tempo);
-      
+        queryMap.set('acousticness', acousticness);
 
 //This adds each query parameter to the query (omitting null values)      
               var url='';
-                       queryMap.forEach((key,values)=>{
+                       queryMap.forEach((values, key)=>{
                   if(values!==''){
-                    url+='&target_' + key + '=' + values;
+                    url+='&target_' + key+ '=' + values;
                   }
                 })
+                      console.log(url); 
+                       console.log('https://api.spotify.com/v1/recommendations?seed_genres=' + seedGenre + url +'&limit=' + limit +'&market=' + market );
             //This call creates the query that returns list of songs
               $.ajax({
                // url: 'https://api.spotify.com/v1/recommendations?seed_genres=' + seedGenre +'&target_valence=' + valence + '&target_energy=' + energy + '&limit=' + limit +'&market=' + market ,
                 url:'https://api.spotify.com/v1/recommendations?seed_genres=' + seedGenre + url +'&limit=' + limit +'&market=' + market ,
+
                 type: 'GET',
                 dataType: 'JSON',
                 headers: {
