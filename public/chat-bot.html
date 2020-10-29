@@ -83,8 +83,43 @@
         var access_token = params.access_token,
             state = params.state,
             storedState = localStorage.getItem(stateKey);
+        var limit ='20';
+        var market = 'US'; 
+
+        let queryMap = new Map();
+        //GOAL: set each of these to variables returned from watson
+        var seedGenre = 'country'; 
+        var valence = '0';
+        var energy = '.5';
+        var danceability ='';
+        var instrumentalness = '';
+        var liveness = '';
+        var loudness = '';
+        var popularity = '';
+        var speechiness = '';
+        var tempo = '';
+      //  queryMap.set('seedGenre', 'country');
+        queryMap.set('valence', valence);
+        queryMap.set('energy', energy);
+        queryMap.set('danceability', danceability);
+        queryMap.set('liveness', liveness);
+        queryMap.set('loudness', loudness);
+        queryMap.set('popularity', popularity);
+        queryMap.set('speechiness', speechiness);
+        queryMap.set('tempo', tempo);
+      
+
+//This adds each query parameter to the query (omitting null values)      
+              var url='';
+                       queryMap.forEach((key,values)=>{
+                  if(values!==''){
+                    url+='&target_' + key + '=' + values;
+                  }
+                })
+            //This call creates the query that returns list of songs
               $.ajax({
-                url: 'https://api.spotify.com/v1/recommendations?seed_genres=country&valence=0&energy=.5&limit=20&market=US',
+               // url: 'https://api.spotify.com/v1/recommendations?seed_genres=' + seedGenre +'&target_valence=' + valence + '&target_energy=' + energy + '&limit=' + limit +'&market=' + market ,
+                url:'https://api.spotify.com/v1/recommendations?seed_genres=' + seedGenre + url +'&limit=' + limit +'&market=' + market ,
                 type: 'GET',
                 dataType: 'JSON',
                 headers: {
@@ -92,9 +127,11 @@
                 },
                 success: function(response) {
                var obj =JSON.parse(JSON.stringify(response));
-               console.log(obj);
-                document.getElementById("demo").innerHTML = obj.tracks[0].uri;
+       //        console.log(obj);
+     //           console.log(response);
+            //    document.getElementById("demo").innerHTML = obj.tracks[0].uri;
                 var track1 = obj.tracks[0].uri;
+                var playlistName = 'Example Playlist'
                   $.ajax({
                              url: 'https://api.spotify.com/v1/users/ryleefra/playlists',
                               type: 'POST',
@@ -105,7 +142,7 @@
 
                           'Content-Type': 'application/json'
                         },
-                        data: JSON.stringify({'name': 'Example Playlist'}),
+                        data: JSON.stringify({'name': playlistName}),
                       
                         success: function(response){
                           var i=0;
@@ -114,8 +151,11 @@
                             tracks += obj.tracks[i].uri+',';
                           }
                         
-                          var playlist = '2If4YggzwIw1NZFmEoO8Zb';
-                           console.log(JSON.stringify(response));
+                       //   var playlist = '2If4YggzwIw1NZFmEoO8Zb';
+                        //   console.log(JSON.stringify(response));
+                            var playlistJSON = JSON.parse(JSON.stringify(response));
+                            var playlist = playlistJSON.id;
+                    //        console.log(playlistJSON);
                              $.ajax({
                                    url: 'https://api.spotify.com/v1/users/ryleefra/playlists/' +playlist +'/tracks?' + tracks,
                                     type: 'POST',
@@ -129,12 +169,12 @@
                             
                               success: function(response){
                               
-                                 console.log(JSON.stringify(response));
+//                                 console.log(JSON.stringify(response));
                               }
                               })
                         }
                         })
-                   console.log(JSON.stringify(response));
+                 //  console.log(JSON.stringify(response));
                 }
             
             })
@@ -149,7 +189,7 @@
                   'Authorization': 'Bearer ' + access_token
                 },
                 success: function(response) {
-                   console.log(JSON.stringify(response));
+   //                console.log(JSON.stringify(response));
                   userProfilePlaceholder.innerHTML = userProfileTemplate(response);
                   const element = document.querySelector('.chatElement')
                 window.watsonAssistantChatOptions = {
