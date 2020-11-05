@@ -94,13 +94,13 @@
         var valence = 'sad';
         var energy = 'medium';
         var danceability ='';
-        var instrumentalness = '';
-        var liveness = '1';
-        var loudness = '';
+        var instrumentalness = 'vocal';
+        var liveness = 'live';
+        var loudness = 'soft';
         var popularity = '';
         var speechiness = '';
-        var tempo = '';
-        var acousticness ='1';
+        var tempo = 'fast';
+        var acousticness ='';
         let valenceMap = new Map();
         valenceMap.set('sad', '0');
         valenceMap.set('angry', '0.2');
@@ -112,6 +112,36 @@
         energyMap.set('medium', '0.5');
         energyMap.set('low', '0');
         energy = energyMap.get(energy);
+        let genreMap = new Map();
+        genreMap.set('rap', 'hip-hop');
+        genreMap.set('hip hop', 'hip-hop');
+        genreMap.set('rock', 'rock');
+        genreMap.set('country', 'country');
+        genreMap.set('R&B', 'r-n-b');
+        genreMap.set('pop', 'pop');
+        genreMap.set('classical', 'classical');
+        genreMap.set('alternative', 'alternative');
+        genreMap.set('edm', 'edm');
+        genreMap.set('dubstep', 'dubstep');
+        genreMap.set('disco', 'disco');
+        seedGenre = genreMap.get(seedGenre);
+         let livenessMap = new Map();
+        livenessMap.set('recorded', '0');
+        livenessMap.set('live', '1')
+        liveness = livenessMap.get(liveness);
+        let loudnessMap = new Map();
+        loudnessMap.set('medium loud', '-30');
+        loudnessMap.set('soft', '-50');
+        loudnessMap.set('loud', '-10');
+        loudness = loudnessMap.get(loudness);
+        let instrumentalnessMap = new Map();
+        instrumentalnessMap.set('instrumentalness', '1');
+        instrumentalnessMap.set('vocal', '0');
+        instrumentalness = instrumentalnessMap.get(instrumentalness);
+        let tempoMap = new Map();
+        tempoMap.set('fast', '140');
+        tempoMap.set('slow', '80');
+        tempo = tempoMap.get(tempo);
       //  queryMap.set('seedGenre', 'country');
         queryMap.set('valence', valence);
         queryMap.set('energy', energy);
@@ -136,7 +166,7 @@
               $.ajax({
                // url: 'https://api.spotify.com/v1/recommendations?seed_genres=' + seedGenre +'&target_valence=' + valence + '&target_energy=' + energy + '&limit=' + limit +'&market=' + market ,
                 url:'https://api.spotify.com/v1/recommendations?seed_genres=' + seedGenre + url +'&limit=' + limit +'&market=' + market ,
-
+            //    url: 'https://api.spotify.com/v1/recommendations/available-genre-seeds',
                 type: 'GET',
                 dataType: 'JSON',
                 headers: {
@@ -144,7 +174,7 @@
                 },
                 success: function(response) {
                var obj =JSON.parse(JSON.stringify(response));
-       //        console.log(obj);
+            //   console.log(obj);
      //           console.log(response);
             //    document.getElementById("demo").innerHTML = obj.tracks[0].uri;
                 var track1 = obj.tracks[0].uri;
