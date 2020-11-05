@@ -83,14 +83,16 @@
         var access_token = params.access_token,
             state = params.state,
             storedState = localStorage.getItem(stateKey);
+
+
         var limit ='20';
         var market = 'US'; 
 
         let queryMap = new Map();
         //GOAL: set each of these to variables returned from watson
         var seedGenre = 'country'; 
-        var valence = '0';
-        var energy = '.5';
+        var valence = 'sad';
+        var energy = 'medium';
         var danceability ='';
         var instrumentalness = '';
         var liveness = '1';
@@ -99,6 +101,17 @@
         var speechiness = '';
         var tempo = '';
         var acousticness ='1';
+        let valenceMap = new Map();
+        valenceMap.set('sad', '0');
+        valenceMap.set('angry', '0.2');
+        valenceMap.set('fine', '.5');
+        valenceMap.set('happy', '1');
+        valence = valenceMap.get(valence);
+        let energyMap = new Map();
+        energyMap.set('high', '1');
+        energyMap.set('medium', '0.5');
+        energyMap.set('low', '0');
+        energy = energyMap.get(energy);
       //  queryMap.set('seedGenre', 'country');
         queryMap.set('valence', valence);
         queryMap.set('energy', energy);
@@ -182,6 +195,10 @@
                 }
             
             })
+
+
+
+
         if (access_token && (state == null || state !== storedState)) {
           alert('There was an error during the authentication');
         } else {
@@ -211,6 +228,8 @@
                 instance.render();
             }
         };
+
+
         setTimeout(function(){
             const t=document.createElement('script');
             t.src="https://web-chat.global.assistant.watson.appdomain.cloud/loadWatsonAssistantChat.js";
