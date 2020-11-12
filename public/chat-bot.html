@@ -82,9 +82,9 @@
 
           let queryMap = new Map();
           //GOAL: set each of these to variables returned from watson
-          var seedGenre = params.genre; 
-          var valence = params.valence;
-          var energy = params.energy;
+          var seedGenre = params['genre']; 
+          var valence = params['valence'];
+          var energy = params['energy'];
           var danceability ='';
           var instrumentalness = '';
           var liveness = '';
@@ -94,16 +94,16 @@
           var acousticness ='';
           var tempo = '';
           if(params['instrumentalness'] !== undefined){
-            var instrumentalness = params['instrumentalness'];
+            instrumentalness = params['instrumentalness'];
           }
           if(params['liveness'] !== undefined){
-            var liveness = params['liveness'];
+            liveness = params['liveness'];
           }
           if(params['loudness'] !== undefined){
-            var loudness = params['loudness'];
+            loudness = params['loudness'];
           }
           if(params['tempo'] !== undefined){
-            var tempo = params['tempo'];
+            tempo = params['tempo'];
           }
           let valenceMap = new Map();
           valenceMap.set('sad', '0');
@@ -131,20 +131,24 @@
           seedGenre = genreMap.get(seedGenre);
           let livenessMap = new Map();
           livenessMap.set('recorded', '0');
-          livenessMap.set('live', '1')
+          livenessMap.set('live', '1');
+          livenessMap.set('', '');
           liveness = livenessMap.get(liveness);
           let loudnessMap = new Map();
           loudnessMap.set('medium loud', '-30');
           loudnessMap.set('soft', '-50');
           loudnessMap.set('loud', '-10');
+          loudnessMap.set('', '');
           loudness = loudnessMap.get(loudness);
           let instrumentalnessMap = new Map();
           instrumentalnessMap.set('instrumentalness', '1');
           instrumentalnessMap.set('vocal', '0');
+          instrumentalnessMap.set('', '');
           instrumentalness = instrumentalnessMap.get(instrumentalness);
           let tempoMap = new Map();
           tempoMap.set('fast', '140');
           tempoMap.set('slow', '80');
+          tempoMap.set('', '');
           tempo = tempoMap.get(tempo);
         //  queryMap.set('seedGenre', 'country');
           queryMap.set('valence', valence);
@@ -182,7 +186,7 @@
       //           console.log(response);
               //    document.getElementById("demo").innerHTML = obj.tracks[0].uri;
                   var track1 = obj.tracks[0].uri;
-                  var playlistName = 'Example Playlist';
+                  var playlistName = params['playlist_name'].replace(/"/g, '');
                     $.ajax({
                               url: 'https://api.spotify.com/v1/users/spill175/playlists',
                                 type: 'POST',
@@ -230,10 +234,18 @@
               })
         }
 
+        function preSendHandler(event){
+          var context_vars = event.data.context.skills['main skill'].user_defined; 
+          if(context_vars !== undefined && context_vars['playlist_name'] !== undefined){
+            console.log('need to clear');
+            event.data.context.skills['main skill'].user_defined = null; 
+          }
+        }
+
         function receiveHandler(event){
           var context_vars = event.data.context.skills['main skill'].user_defined;
           console.log(context_vars)
-          if (context_vars !== undefined){
+          if (context_vars !== undefined && context_vars['playlist_name'] !== undefined){
             if(context_vars['genre'] !== undefined && context_vars['energy'] !== undefined && context_vars['valence'] !== undefined){
               console.log(context_vars);
               var params = context_vars;
@@ -275,7 +287,7 @@
       serviceInstanceID: "f551a468-4c0f-490c-ab56-11e118020660", // The ID of your service instance.
 
       onLoad: function(instance) { 
-        //instance.on({ type: "window:open", handler: preSendhandler });
+        instance.on({ type: "pre:send", handler: preSendHandler });
         instance.on({ type: "receive", handler: receiveHandler });
         instance.render(); 
       }
