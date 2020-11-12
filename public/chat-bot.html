@@ -165,30 +165,7 @@
           queryMap.set('acousticness', acousticness);
 
   //This adds each query parameter to the query (omitting null values)      
-
-
-                var userName= '';
-                var ob='';
                 var url='';
-
-                      $.ajax({
-                              url: 'https://api.spotify.com/v1/me',
-                                type: 'GET',
-                                dataType: 'JSON',
-                          headers: {
-
-                            'Authorization': 'Bearer ' + access_token,
-
-                            'Content-Type': 'application/json'
-                          },
-                        
-                          success: function(response){
-                             ob =JSON.parse(JSON.stringify(response));
-                            userName = ob.id;
-                            console.log(userName);
-                            console.log(ob);
-}
-})
                         queryMap.forEach((values, key)=>{
                     if(values!==''){
                       url+='&target_' + key+ '=' + values;
@@ -213,9 +190,8 @@
               //    document.getElementById("demo").innerHTML = obj.tracks[0].uri;
                   var track1 = obj.tracks[0].uri;
                   var playlistName = params['playlist_name'].replace(/"/g, '');
-             
                     $.ajax({
-                              url: 'https://api.spotify.com/v1/users/'+userName+'/playlists',
+                              url: 'https://api.spotify.com/v1/users/spill175/playlists',
                                 type: 'POST',
                                 dataType: 'JSON',
                           headers: {
@@ -239,7 +215,7 @@
                               var playlist = playlistJSON.id;
                       //        console.log(playlistJSON);
                               $.ajax({
-                                    url: 'https://api.spotify.com/v1/users/' +userName+'/playlists/' +playlist +'/tracks?' + tracks,
+                                    url: 'https://api.spotify.com/v1/users/spill175/playlists/' +playlist +'/tracks?' + tracks,
                                       type: 'POST',
                                       dataType: 'JSON',
                                 headers: {
@@ -260,8 +236,6 @@
               
               })
         }
-
-
 
         function preSendHandler(event){
           var context_vars = event.data.context.skills['main skill'].user_defined; 
