@@ -58,10 +58,6 @@
           }
           return hashParams;
         }
-        function preSendhandler(event) {
-    event.data.context.skills['main skill'].user_defined.ismember = true;    
-  }
-
 
         /**
          * Generates a random string containing numbers and letters
@@ -78,6 +74,177 @@
           return text;
         };
 
+        function makeSpotifyCalls(params){
+          var access_token = getHashParams().access_token;
+
+          var limit ='20';
+          var market = 'US'; 
+
+          let queryMap = new Map();
+          //GOAL: set each of these to variables returned from watson
+          var seedGenre = params.genre; 
+          var valence = params.valence;
+          var energy = params.energy;
+          var danceability ='';
+          var instrumentalness = '';
+          var liveness = '';
+          var loudness = '';
+          var popularity = '';
+          var speechiness = '';
+          var acousticness ='';
+          var tempo = '';
+          if(params['instrumentalness'] !== undefined){
+            var instrumentalness = params['instrumentalness'];
+          }
+          if(params['liveness'] !== undefined){
+            var liveness = params['liveness'];
+          }
+          if(params['loudness'] !== undefined){
+            var loudness = params['loudness'];
+          }
+          if(params['tempo'] !== undefined){
+            var tempo = params['tempo'];
+          }
+          let valenceMap = new Map();
+          valenceMap.set('sad', '0');
+          valenceMap.set('angry', '0.2');
+          valenceMap.set('fine', '.5');
+          valenceMap.set('happy', '1');
+          valence = valenceMap.get(valence);
+          let energyMap = new Map();
+          energyMap.set('high', '1');
+          energyMap.set('medium', '0.5');
+          energyMap.set('low', '0');
+          energy = energyMap.get(energy);
+          let genreMap = new Map();
+          genreMap.set('rap', 'hip-hop');
+          genreMap.set('hip hop', 'hip-hop');
+          genreMap.set('rock', 'rock');
+          genreMap.set('country', 'country');
+          genreMap.set('R&B', 'r-n-b');
+          genreMap.set('pop', 'pop');
+          genreMap.set('classical', 'classical');
+          genreMap.set('alternative', 'alternative');
+          genreMap.set('edm', 'edm');
+          genreMap.set('dubstep', 'dubstep');
+          genreMap.set('disco', 'disco');
+          seedGenre = genreMap.get(seedGenre);
+          let livenessMap = new Map();
+          livenessMap.set('recorded', '0');
+          livenessMap.set('live', '1')
+          liveness = livenessMap.get(liveness);
+          let loudnessMap = new Map();
+          loudnessMap.set('medium loud', '-30');
+          loudnessMap.set('soft', '-50');
+          loudnessMap.set('loud', '-10');
+          loudness = loudnessMap.get(loudness);
+          let instrumentalnessMap = new Map();
+          instrumentalnessMap.set('instrumentalness', '1');
+          instrumentalnessMap.set('vocal', '0');
+          instrumentalness = instrumentalnessMap.get(instrumentalness);
+          let tempoMap = new Map();
+          tempoMap.set('fast', '140');
+          tempoMap.set('slow', '80');
+          tempo = tempoMap.get(tempo);
+        //  queryMap.set('seedGenre', 'country');
+          queryMap.set('valence', valence);
+          queryMap.set('energy', energy);
+          queryMap.set('danceability', danceability);
+          queryMap.set('liveness', liveness);
+          queryMap.set('loudness', loudness);
+          queryMap.set('popularity', popularity);
+          queryMap.set('speechiness', speechiness);
+          queryMap.set('tempo', tempo);
+          queryMap.set('acousticness', acousticness);
+
+  //This adds each query parameter to the query (omitting null values)      
+                var url='';
+                        queryMap.forEach((values, key)=>{
+                    if(values!==''){
+                      url+='&target_' + key+ '=' + values;
+                    }
+                  })
+                        console.log(url); 
+                        console.log('https://api.spotify.com/v1/recommendations?seed_genres=' + seedGenre + url +'&limit=' + limit +'&market=' + market );
+              //This call creates the query that returns list of songs
+                $.ajax({
+                // url: 'https://api.spotify.com/v1/recommendations?seed_genres=' + seedGenre +'&target_valence=' + valence + '&target_energy=' + energy + '&limit=' + limit +'&market=' + market ,
+                  url:'https://api.spotify.com/v1/recommendations?seed_genres=' + seedGenre + url +'&limit=' + limit +'&market=' + market ,
+              //    url: 'https://api.spotify.com/v1/recommendations/available-genre-seeds',
+                  type: 'GET',
+                  dataType: 'JSON',
+                  headers: {
+                    'Authorization': 'Bearer ' + access_token
+                  },
+                  success: function(response) {
+                var obj =JSON.parse(JSON.stringify(response));
+              //   console.log(obj);
+      //           console.log(response);
+              //    document.getElementById("demo").innerHTML = obj.tracks[0].uri;
+                  var track1 = obj.tracks[0].uri;
+                  var playlistName = 'Example Playlist';
+                    $.ajax({
+                              url: 'https://api.spotify.com/v1/users/spill175/playlists',
+                                type: 'POST',
+                                dataType: 'JSON',
+                          headers: {
+
+                            'Authorization': 'Bearer ' + access_token,
+
+                            'Content-Type': 'application/json'
+                          },
+                          data: JSON.stringify({'name': playlistName}),
+                        
+                          success: function(response){
+                            var i=0;
+                            var tracks = 'uris=';
+                            for(i=0; i<20; i++){
+                              tracks += obj.tracks[i].uri+',';
+                            }
+                          
+                        //   var playlist = '2If4YggzwIw1NZFmEoO8Zb';
+                          //   console.log(JSON.stringify(response));
+                              var playlistJSON = JSON.parse(JSON.stringify(response));
+                              var playlist = playlistJSON.id;
+                      //        console.log(playlistJSON);
+                              $.ajax({
+                                    url: 'https://api.spotify.com/v1/users/spill175/playlists/' +playlist +'/tracks?' + tracks,
+                                      type: 'POST',
+                                      dataType: 'JSON',
+                                headers: {
+
+                                  'Authorization': 'Bearer ' + access_token,
+
+                                  'Content-Type': 'application/json'
+                                },
+                              
+                                success: function(response){
+  //                                 console.log(JSON.stringify(response));
+                                }
+                                })
+                          }
+                          })
+                  //  console.log(JSON.stringify(response));
+                  }
+              
+              })
+        }
+
+        function receiveHandler(event){
+          var context_vars = event.data.context.skills['main skill'].user_defined;
+          console.log(context_vars)
+          if (context_vars !== undefined){
+            if(context_vars['genre'] !== undefined && context_vars['energy'] !== undefined && context_vars['valence'] !== undefined){
+              console.log(context_vars);
+              var params = context_vars;
+              makeSpotifyCalls(params);
+            }
+          }else{
+              console.log("can't do spotify thing");
+              console.log(context_vars);
+          }
+        }
+
         var userProfileSource = document.getElementById('user-profile-template').innerHTML,
             userProfileTemplate = Handlebars.compile(userProfileSource),
             userProfilePlaceholder = document.getElementById('user-profile');
@@ -87,150 +254,6 @@
         var access_token = params.access_token,
             state = params.state,
             storedState = localStorage.getItem(stateKey);
-
-
-        var limit ='20';
-        var market = 'US'; 
-
-        let queryMap = new Map();
-        //GOAL: set each of these to variables returned from watson
-        var seedGenre = 'country'; 
-        var valence = 'sad';
-        var energy = 'medium';
-        var danceability ='';
-        var instrumentalness = 'vocal';
-        var liveness = 'live';
-        var loudness = 'soft';
-        var popularity = '';
-        var speechiness = '';
-        var tempo = 'fast';
-        var acousticness ='';
-        let valenceMap = new Map();
-        valenceMap.set('sad', '0');
-        valenceMap.set('angry', '0.2');
-        valenceMap.set('fine', '.5');
-        valenceMap.set('happy', '1');
-        valence = valenceMap.get(valence);
-        let energyMap = new Map();
-        energyMap.set('high', '1');
-        energyMap.set('medium', '0.5');
-        energyMap.set('low', '0');
-        energy = energyMap.get(energy);
-        let genreMap = new Map();
-        genreMap.set('rap', 'hip-hop');
-        genreMap.set('hip hop', 'hip-hop');
-        genreMap.set('rock', 'rock');
-        genreMap.set('country', 'country');
-        genreMap.set('R&B', 'r-n-b');
-        genreMap.set('pop', 'pop');
-        genreMap.set('classical', 'classical');
-        genreMap.set('alternative', 'alternative');
-        genreMap.set('edm', 'edm');
-        genreMap.set('dubstep', 'dubstep');
-        genreMap.set('disco', 'disco');
-        seedGenre = genreMap.get(seedGenre);
-         let livenessMap = new Map();
-        livenessMap.set('recorded', '0');
-        livenessMap.set('live', '1')
-        liveness = livenessMap.get(liveness);
-        let loudnessMap = new Map();
-        loudnessMap.set('medium loud', '-30');
-        loudnessMap.set('soft', '-50');
-        loudnessMap.set('loud', '-10');
-        loudness = loudnessMap.get(loudness);
-        let instrumentalnessMap = new Map();
-        instrumentalnessMap.set('instrumentalness', '1');
-        instrumentalnessMap.set('vocal', '0');
-        instrumentalness = instrumentalnessMap.get(instrumentalness);
-        let tempoMap = new Map();
-        tempoMap.set('fast', '140');
-        tempoMap.set('slow', '80');
-        tempo = tempoMap.get(tempo);
-      //  queryMap.set('seedGenre', 'country');
-        queryMap.set('valence', valence);
-        queryMap.set('energy', energy);
-        queryMap.set('danceability', danceability);
-        queryMap.set('liveness', liveness);
-        queryMap.set('loudness', loudness);
-        queryMap.set('popularity', popularity);
-        queryMap.set('speechiness', speechiness);
-        queryMap.set('tempo', tempo);
-        queryMap.set('acousticness', acousticness);
-
-//This adds each query parameter to the query (omitting null values)      
-              var url='';
-                       queryMap.forEach((values, key)=>{
-                  if(values!==''){
-                    url+='&target_' + key+ '=' + values;
-                  }
-                })
-                      console.log(url); 
-                       console.log('https://api.spotify.com/v1/recommendations?seed_genres=' + seedGenre + url +'&limit=' + limit +'&market=' + market );
-            //This call creates the query that returns list of songs
-              $.ajax({
-               // url: 'https://api.spotify.com/v1/recommendations?seed_genres=' + seedGenre +'&target_valence=' + valence + '&target_energy=' + energy + '&limit=' + limit +'&market=' + market ,
-                url:'https://api.spotify.com/v1/recommendations?seed_genres=' + seedGenre + url +'&limit=' + limit +'&market=' + market ,
-            //    url: 'https://api.spotify.com/v1/recommendations/available-genre-seeds',
-                type: 'GET',
-                dataType: 'JSON',
-                headers: {
-                  'Authorization': 'Bearer ' + access_token
-                },
-                success: function(response) {
-               var obj =JSON.parse(JSON.stringify(response));
-            //   console.log(obj);
-     //           console.log(response);
-            //    document.getElementById("demo").innerHTML = obj.tracks[0].uri;
-                var track1 = obj.tracks[0].uri;
-                var playlistName = 'Example Playlist';
-                  $.ajax({
-                             url: 'https://api.spotify.com/v1/users/ryleefra/playlists',
-                              type: 'POST',
-                              dataType: 'JSON',
-                        headers: {
-
-                          'Authorization': 'Bearer ' + access_token,
-
-                          'Content-Type': 'application/json'
-                        },
-                        data: JSON.stringify({'name': playlistName}),
-                      
-                        success: function(response){
-                          var i=0;
-                          var tracks = 'uris=';
-                          for(i=0; i<20; i++){
-                            tracks += obj.tracks[i].uri+',';
-                          }
-                        
-                       //   var playlist = '2If4YggzwIw1NZFmEoO8Zb';
-                        //   console.log(JSON.stringify(response));
-                            var playlistJSON = JSON.parse(JSON.stringify(response));
-                            var playlist = playlistJSON.id;
-                    //        console.log(playlistJSON);
-                             $.ajax({
-                                   url: 'https://api.spotify.com/v1/users/ryleefra/playlists/' +playlist +'/tracks?' + tracks,
-                                    type: 'POST',
-                                    dataType: 'JSON',
-                              headers: {
-
-                                'Authorization': 'Bearer ' + access_token,
-
-                                'Content-Type': 'application/json'
-                              },
-                            
-                              success: function(response){
-                              
-//                                 console.log(JSON.stringify(response));
-                              }
-                              })
-                        }
-                        })
-                 //  console.log(JSON.stringify(response));
-                }
-            
-            })
-
-
 
         if (access_token && (state == null || state !== storedState)) {
           alert('There was an error during the authentication');
@@ -243,7 +266,6 @@
                   'Authorization': 'Bearer ' + access_token
                 },
                 success: function(response) {
-   //                console.log(JSON.stringify(response));
                   userProfilePlaceholder.innerHTML = userProfileTemplate(response);
                   const element = document.querySelector('.chatElement')
 
@@ -251,39 +273,19 @@
       integrationID: "98e929fb-81df-47e9-b8fe-f86c9d7cf722", // The ID of this integration.
       region: "us-south", // The region your integration is hosted in.
       serviceInstanceID: "f551a468-4c0f-490c-ab56-11e118020660", // The ID of your service instance.
+
       onLoad: function(instance) { 
-        instance.on({ type: "pre:send", handler: preSendhandler });
-        instance.render(); }
-    };
+        //instance.on({ type: "window:open", handler: preSendhandler });
+        instance.on({ type: "receive", handler: receiveHandler });
+        instance.render(); 
+      }
+  };
   setTimeout(function(){
     const t=document.createElement('script');
     t.src="https://web-chat.global.assistant.watson.appdomain.cloud/loadWatsonAssistantChat.js";
     document.head.appendChild(t);
   });
 
-    /*            window.watsonAssistantChatOptions = {
-            integrationID: "b6a8e4ed-a8ca-4a58-ad7c-d903e401735d", // The ID of this integration.
-            region: "us-south", // The region your integration is hosted in.
-            serviceInstanceID: "eb26c4ad-a1cb-4fee-9084-dede2ea4e023", // The ID of your service instance.
-            element: element,
-            hideCloseButton: true,
-            showLauncher: false,
-            openChatByDefault: true,
-            onLoad: function(instance) {
-                instance.updateCSSVariables({
-                    'BASE-font-family': '"Times New Roman", Times, serif'
-                });
-                instance.render();
-            }
-        };
-
-
-        setTimeout(function(){
-            const t=document.createElement('script');
-            t.src="https://web-chat.global.assistant.watson.appdomain.cloud/loadWatsonAssistantChat.js";
-            document.head.appendChild(t);
-        });
-        */
                   $('#login').hide();
                   $('#loggedin').show();
                 }
@@ -314,9 +316,6 @@
           }, false);
         }
       })();
-    </script>
-    <script>
-       
     </script>
 </body>
 </html>
