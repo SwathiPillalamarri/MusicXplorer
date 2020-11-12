@@ -56,6 +56,7 @@
           while ( e = r.exec(q)) {
              hashParams[e[1]] = decodeURIComponent(e[2]);
           }
+          console.log(hashParams);
           return hashParams;
         }
 
@@ -128,6 +129,8 @@
           genreMap.set('edm', 'edm');
           genreMap.set('dubstep', 'dubstep');
           genreMap.set('disco', 'disco');
+          genreMap.set('folk', 'folk');
+          genreMap.set('indie', 'indie');
           seedGenre = genreMap.get(seedGenre);
           let livenessMap = new Map();
           livenessMap.set('recorded', '0');
