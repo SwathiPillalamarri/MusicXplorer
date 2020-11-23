@@ -1,359 +1,392 @@
 <html>
 <head>
+  <style>
+    .chatElement {
+      height: 100%;
+      width: 100%;
+    }
+    .column {
+      float: left;
+      width: 50%;
+    }
+    .row:after {
+      content: "";
+      display: table;
+      clear: both;
+    }
+  </style>
 </head>
 <body>
-    <div class= "container">
-        <div id=login>
-            <div class="alert">
-                <strong>Warning!</strong> Must login to Spotify. Click here
-                <button id="login-button" class="btn btn-primary">Log in with Spotify</button>
-            </div>
-        </div>
-    </div>
-    <div id="loggedin">
-        <div id="user-profile">
-        </div>
-        <div id="oauth">
-        </div>
+  <div class= "container">
+      <div id=login>
+          <div class="alert">
+              <strong>Warning!</strong> Must login to Spotify. Click here
+              <button id="login-button" class="btn btn-primary">Log in with Spotify</button>
+          </div>
+      </div>
+  </div>
+  <div id="loggedin">
+      <div id="user-profile">
+      </div>
+      <div id="oauth">
       </div>
     </div>
+  </div>
 
-    <script id="user-profile-template" type="text/x-handlebars-template">
-        <h1>Logged in as {{display_name}}</h1>
-        <div class="media">
-          <div class="pull-left">
-            <img class="media-object" width="150" src="{{images.0.url}}" />
-          </div>
-          <div class="media-body">
-            <dl class="dl-horizontal">
-              <dt>Display name</dt><dd class="clearfix">{{display_name}}</dd>
-              <dt>Id</dt><dd>{{id}}</dd>
-              <dt>Email</dt><dd>{{email}}</dd>
-              <dt>Spotify URI</dt><dd><a href="{{external_urls.spotify}}">{{external_urls.spotify}}</a></dd>
-              <dt>Link</dt><dd><a href="{{href}}">{{href}}</a></dd>
-              <dt>Profile Image</dt><dd class="clearfix"><a href="{{images.0.url}}">{{images.0.url}}</a></dd>
-              <dt>Country</dt><dd>{{country}}</dd>
-            </dl>
-          </div>
-        </div>
-      </script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>
-    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
-    <p id="demo"></p>
-    <script>
-      (function() {
+  <script id="user-profile-template" type="text/x-handlebars-template">
+    <!-- <h1>Logged in as {{display_name}}</h1>
+    <div class="media">
+      <div class="pull-left">
+        <img class="media-object" width="150" src="{{images.0.url}}" />
+      </div>
+      <div class="media-body">
+        <dl class="dl-horizontal">
+          <dt>Display name</dt><dd class="clearfix">{{display_name}}</dd>
+          <dt>Id</dt><dd>{{id}}</dd>
+          <dt>Email</dt><dd>{{email}}</dd>
+          <dt>Spotify URI</dt><dd><a href="{{external_urls.spotify}}">{{external_urls.spotify}}</a></dd>
+          <dt>Link</dt><dd><a href="{{href}}">{{href}}</a></dd>
+          <dt>Profile Image</dt><dd class="clearfix"><a href="{{images.0.url}}">{{images.0.url}}</a></dd>
+          <dt>Country</dt><dd>{{country}}</dd>
+        </dl>
+      </div>
+    </div> -->
+    <div class="row">
+      <div class="column">
+        <img src="MX.svg" alt="logo" width="75%" style="margin:15% 11% 11% 11%">
+      </div>
+      <div class="column">
+        <div class="chatElement"></div>
+      </div>
+    </div>
+  </script>
 
-        var stateKey = 'spotify_auth_state';
 
-        /**
-         * Obtains parameters from the hash of the URL
-         * @return Object
-         */
-        function getHashParams() {
-          var hashParams = {};
-          var e, r = /([^&;=]+)=?([^&;]*)/g,
-              q = window.location.hash.substring(1);
-          while ( e = r.exec(q)) {
-             hashParams[e[1]] = decodeURIComponent(e[2]);
-          }
-          console.log(hashParams);
-          return hashParams;
+
+  <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>
+  <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+  <p id="demo"></p>
+  <script>
+    (function() {
+
+      var stateKey = 'spotify_auth_state';
+
+      /**
+       * Obtains parameters from the hash of the URL
+       * @return Object
+       */
+      function getHashParams() {
+        var hashParams = {};
+        var e, r = /([^&;=]+)=?([^&;]*)/g,
+            q = window.location.hash.substring(1);
+        while ( e = r.exec(q)) {
+          hashParams[e[1]] = decodeURIComponent(e[2]);
         }
+        console.log(hashParams);
+        return hashParams;
+      }
 
-        /**
-         * Generates a random string containing numbers and letters
-         * @param  {number} length The length of the string
-         * @return {string} The generated string
-         */
-        function generateRandomString(length) {
-          var text = '';
-          var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      /**
+       * Generates a random string containing numbers and letters
+       * @param  {number} length The length of the string
+       * @return {string} The generated string
+       */
+      function generateRandomString(length) {
+        var text = '';
+        var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
-          for (var i = 0; i < length; i++) {
-            text += possible.charAt(Math.floor(Math.random() * possible.length));
-          }
-          return text;
-        };
+        for (var i = 0; i < length; i++) {
+          text += possible.charAt(Math.floor(Math.random() * possible.length));
+        }
+        return text;
+      };
 
-        function makeSpotifyCalls(params){
-          var access_token = getHashParams().access_token;
+      function makeSpotifyCalls(params){
+        var access_token = getHashParams().access_token;
 
-          var limit ='20';
-          var market = 'US'; 
+        var limit ='20';
+        var market = 'US'; 
 
-          let queryMap = new Map();
-          //GOAL: set each of these to variables returned from watson
-          var seedGenre = params['genre']; 
-          var valence = params['valence'];
-          var energy = params['energy'];
-          var danceability ='';
-          var instrumentalness = '';
-          var liveness = '';
-          var loudness = '';
-          var popularity = '';
-          var speechiness = '';
-          var acousticness ='';
-          var tempo = '';
-          if(params['instrumentalness'] !== undefined){
-            instrumentalness = params['instrumentalness'];
-          }
-          if(params['liveness'] !== undefined){
-            liveness = params['liveness'];
-          }
-          if(params['loudness'] !== undefined){
-            loudness = params['loudness'];
-          }
-          if(params['tempo'] !== undefined){
-            tempo = params['tempo'];
-          }
-          let valenceMap = new Map();
-          valenceMap.set('sad', '0');
-          valenceMap.set('angry', '0.2');
-          valenceMap.set('fine', '.5');
-          valenceMap.set('happy', '1');
-          valence = valenceMap.get(valence);
-          let energyMap = new Map();
-          energyMap.set('high', '1');
-          energyMap.set('medium', '0.5');
-          energyMap.set('low', '0');
-          energy = energyMap.get(energy);
-          let genreMap = new Map();
-          genreMap.set('rap', 'hip-hop');
-          genreMap.set('hip-hop', 'hip-hop');
-          genreMap.set('rock', 'rock');
-          genreMap.set('country', 'country');
-          genreMap.set('R&B', 'r-n-b');
-          genreMap.set('pop', 'pop');
-          genreMap.set('classical', 'classical');
-          genreMap.set('alternative', 'alternative');
-          genreMap.set('edm', 'edm');
-          genreMap.set('dubstep', 'dubstep');
-          genreMap.set('disco', 'disco');
-          genreMap.set('folk', 'folk');
-          genreMap.set('indie', 'indie');
-          seedGenre = genreMap.get(seedGenre);
-          let livenessMap = new Map();
-          livenessMap.set('recorded', '0');
-          livenessMap.set('live', '1');
-          livenessMap.set('', '');
-          liveness = livenessMap.get(liveness);
-          let loudnessMap = new Map();
-          loudnessMap.set('medium loud', '-30');
-          loudnessMap.set('soft', '-50');
-          loudnessMap.set('loud', '-10');
-          loudnessMap.set('', '');
-          loudness = loudnessMap.get(loudness);
-          let instrumentalnessMap = new Map();
-          instrumentalnessMap.set('instrumentalness', '1');
-          instrumentalnessMap.set('vocal', '0');
-          instrumentalnessMap.set('', '');
-          instrumentalness = instrumentalnessMap.get(instrumentalness);
-          let tempoMap = new Map();
-          tempoMap.set('fast', '140');
-          tempoMap.set('slow', '80');
-          tempoMap.set('', '');
-          tempo = tempoMap.get(tempo);
+        let queryMap = new Map();
+        //GOAL: set each of these to variables returned from watson
+        var seedGenre = params['genre']; 
+        var valence = params['valence'];
+        var energy = params['energy'];
+        var danceability ='';
+        var instrumentalness = '';
+        var liveness = '';
+        var loudness = '';
+        var popularity = '';
+        var speechiness = '';
+        var acousticness ='';
+        var tempo = '';
+        if(params['instrumentalness'] !== undefined){
+          instrumentalness = params['instrumentalness'];
+        }
+        if(params['liveness'] !== undefined){
+          liveness = params['liveness'];
+        }
+        if(params['loudness'] !== undefined){
+          loudness = params['loudness'];
+        }
+        if(params['tempo'] !== undefined){
+          tempo = params['tempo'];
+        }
+        let valenceMap = new Map();
+        valenceMap.set('sad', '0');
+        valenceMap.set('angry', '0.2');
+        valenceMap.set('fine', '.5');
+        valenceMap.set('happy', '1');
+        valence = valenceMap.get(valence);
+        let energyMap = new Map();
+        energyMap.set('high', '1');
+        energyMap.set('medium', '0.5');
+        energyMap.set('low', '0');
+        energy = energyMap.get(energy);
+        let genreMap = new Map();
+        genreMap.set('rap', 'hip-hop');
+        genreMap.set('hip-hop', 'hip-hop');
+        genreMap.set('rock', 'rock');
+        genreMap.set('country', 'country');
+        genreMap.set('R&B', 'r-n-b');
+        genreMap.set('pop', 'pop');
+        genreMap.set('classical', 'classical');
+        genreMap.set('alternative', 'alternative');
+        genreMap.set('edm', 'edm');
+        genreMap.set('dubstep', 'dubstep');
+        genreMap.set('disco', 'disco');
+        genreMap.set('folk', 'folk');
+        genreMap.set('indie', 'indie');
+        seedGenre = genreMap.get(seedGenre);
+        let livenessMap = new Map();
+        livenessMap.set('recorded', '0');
+        livenessMap.set('live', '1');
+        livenessMap.set('', '');
+        liveness = livenessMap.get(liveness);
+        let loudnessMap = new Map();
+        loudnessMap.set('medium loud', '-30');
+        loudnessMap.set('soft', '-50');
+        loudnessMap.set('loud', '-10');
+        loudnessMap.set('', '');
+        loudness = loudnessMap.get(loudness);
+        let instrumentalnessMap = new Map();
+        instrumentalnessMap.set('instrumentalness', '1');
+        instrumentalnessMap.set('vocal', '0');
+        instrumentalnessMap.set('', '');
+        instrumentalness = instrumentalnessMap.get(instrumentalness);
+        let tempoMap = new Map();
+        tempoMap.set('fast', '140');
+        tempoMap.set('slow', '80');
+        tempoMap.set('', '');
+        tempo = tempoMap.get(tempo);
         //  queryMap.set('seedGenre', 'country');
-          queryMap.set('valence', valence);
-          queryMap.set('energy', energy);
-          queryMap.set('danceability', danceability);
-          queryMap.set('liveness', liveness);
-          queryMap.set('loudness', loudness);
-          queryMap.set('popularity', popularity);
-          queryMap.set('speechiness', speechiness);
-          queryMap.set('tempo', tempo);
-          queryMap.set('acousticness', acousticness);
+        queryMap.set('valence', valence);
+        queryMap.set('energy', energy);
+        queryMap.set('danceability', danceability);
+        queryMap.set('liveness', liveness);
+        queryMap.set('loudness', loudness);
+        queryMap.set('popularity', popularity);
+        queryMap.set('speechiness', speechiness);
+        queryMap.set('tempo', tempo);
+        queryMap.set('acousticness', acousticness);
 
-  //This adds each query parameter to the query (omitting null values)      
-var userName= '';
-                var ob='';
-               
+        //This adds each query parameter to the query (omitting null values)      
+        var userName= '';
+        var ob='';
+      
+        $.ajax({
+          url: 'https://api.spotify.com/v1/me',
+          type: 'GET',
+          dataType: 'JSON',
+          headers: {
+            'Authorization': 'Bearer ' + access_token,
+            'Content-Type': 'application/json'
+          },
+          
+          success: function(response){
+            ob =JSON.parse(JSON.stringify(response));
+            userName = ob.id;
+            console.log(userName);
+            console.log(ob);
+          }
+        })
 
-                      $.ajax({
-                              url: 'https://api.spotify.com/v1/me',
-                                type: 'GET',
-                                dataType: 'JSON',
-                          headers: {
+        var url='';
+        queryMap.forEach((values, key)=>{
+          if(values!==''){
+            url+='&target_' + key+ '=' + values;
+          }
+        })
 
-                            'Authorization': 'Bearer ' + access_token,
+        console.log(url); 
+        console.log('https://api.spotify.com/v1/recommendations?seed_genres=' + seedGenre + url +'&limit=' + limit +'&market=' + market );
+        //This call creates the query that returns list of songs
+        $.ajax({
+          // url: 'https://api.spotify.com/v1/recommendations?seed_genres=' + seedGenre +'&target_valence=' + valence + '&target_energy=' + energy + '&limit=' + limit +'&market=' + market ,
+          url:'https://api.spotify.com/v1/recommendations?seed_genres=' + seedGenre + url +'&limit=' + limit +'&market=' + market ,
+          // url: 'https://api.spotify.com/v1/recommendations/available-genre-seeds',
+          type: 'GET',
+          dataType: 'JSON',
+          headers: {
+            'Authorization': 'Bearer ' + access_token
+          },
 
-                            'Content-Type': 'application/json'
-                          },
-                        
-                          success: function(response){
-                             ob =JSON.parse(JSON.stringify(response));
-                            userName = ob.id;
-                            console.log(userName);
-                            console.log(ob);
-}
-})
+          success: function(response) {
+            var obj =JSON.parse(JSON.stringify(response));
+            //   console.log(obj);
+            //           console.log(response);
+            //    document.getElementById("demo").innerHTML = obj.tracks[0].uri;
+            var track1 = obj.tracks[0].uri;
+            var playlistName = params['playlist_name'].replace(/"/g, '');
+            $.ajax({
+              url: 'https://api.spotify.com/v1/users/'+userName+'/playlists',
+              type: 'POST',
+              dataType: 'JSON',
+              headers: {
+                'Authorization': 'Bearer ' + access_token,
+                'Content-Type': 'application/json'
+              },
+              data: JSON.stringify({'name': playlistName}),
 
-                var url='';
-                        queryMap.forEach((values, key)=>{
-                    if(values!==''){
-                      url+='&target_' + key+ '=' + values;
-                    }
-                  })
-                        console.log(url); 
-                        console.log('https://api.spotify.com/v1/recommendations?seed_genres=' + seedGenre + url +'&limit=' + limit +'&market=' + market );
-              //This call creates the query that returns list of songs
+              success: function(response){
+                var i=0;
+                var tracks = 'uris=';
+                for(i=0; i<20; i++){
+                  tracks += obj.tracks[i].uri+',';
+                }
+                  
+                // var playlist = '2If4YggzwIw1NZFmEoO8Zb';
+                // console.log(JSON.stringify(response));
+                var playlistJSON = JSON.parse(JSON.stringify(response));
+                var playlist = playlistJSON.id;
+                // console.log(playlistJSON);
                 $.ajax({
-                // url: 'https://api.spotify.com/v1/recommendations?seed_genres=' + seedGenre +'&target_valence=' + valence + '&target_energy=' + energy + '&limit=' + limit +'&market=' + market ,
-                  url:'https://api.spotify.com/v1/recommendations?seed_genres=' + seedGenre + url +'&limit=' + limit +'&market=' + market ,
-              //    url: 'https://api.spotify.com/v1/recommendations/available-genre-seeds',
-                  type: 'GET',
+                  url: 'https://api.spotify.com/v1/users/'+userName+'/playlists/' +playlist +'/tracks?' + tracks,
+                  type: 'POST',
                   dataType: 'JSON',
                   headers: {
-                    'Authorization': 'Bearer ' + access_token
+                    'Authorization': 'Bearer ' + access_token,
+                    'Content-Type': 'application/json'
                   },
-                  success: function(response) {
-                var obj =JSON.parse(JSON.stringify(response));
-              //   console.log(obj);
-      //           console.log(response);
-              //    document.getElementById("demo").innerHTML = obj.tracks[0].uri;
-                  var track1 = obj.tracks[0].uri;
-                  var playlistName = params['playlist_name'].replace(/"/g, '');
-                    $.ajax({
-                              url: 'https://api.spotify.com/v1/users/'+userName+'/playlists',
-                                type: 'POST',
-                                dataType: 'JSON',
-                          headers: {
-
-                            'Authorization': 'Bearer ' + access_token,
-
-                            'Content-Type': 'application/json'
-                          },
-                          data: JSON.stringify({'name': playlistName}),
-                        
-                          success: function(response){
-                            var i=0;
-                            var tracks = 'uris=';
-                            for(i=0; i<20; i++){
-                              tracks += obj.tracks[i].uri+',';
-                            }
-                          
-                        //   var playlist = '2If4YggzwIw1NZFmEoO8Zb';
-                          //   console.log(JSON.stringify(response));
-                              var playlistJSON = JSON.parse(JSON.stringify(response));
-                              var playlist = playlistJSON.id;
-                      //        console.log(playlistJSON);
-                              $.ajax({
-                                    url: 'https://api.spotify.com/v1/users/'+userName+'/playlists/' +playlist +'/tracks?' + tracks,
-                                      type: 'POST',
-                                      dataType: 'JSON',
-                                headers: {
-
-                                  'Authorization': 'Bearer ' + access_token,
-
-                                  'Content-Type': 'application/json'
-                                },
-                              
-                                success: function(response){
-  //                                 console.log(JSON.stringify(response));
-                                }
-                                })
-                          }
-                          })
-                  //  console.log(JSON.stringify(response));
+                
+                  success: function(response){
+                  // console.log(JSON.stringify(response));
                   }
-              
-              })
-        }
-
-        function preSendHandler(event){
-          var context_vars = event.data.context.skills['main skill'].user_defined; 
-          if(context_vars !== undefined && context_vars['playlist_name'] !== undefined){
-            console.log('need to clear');
-            event.data.context.skills['main skill'].user_defined = null; 
+                })
+              }
+            })
+            //  console.log(JSON.stringify(response));
           }
-        }
-
-        function receiveHandler(event){
-          var context_vars = event.data.context.skills['main skill'].user_defined;
-          console.log(context_vars)
-          if (context_vars !== undefined && context_vars['playlist_name'] !== undefined){
-            if(context_vars['genre'] !== undefined && context_vars['energy'] !== undefined && context_vars['valence'] !== undefined){
-              console.log(context_vars);
-              var params = context_vars;
-              makeSpotifyCalls(params);
-            }
-          }else{
-              console.log("can't do spotify thing");
-              console.log(context_vars);
-          }
-        }
-
-        var userProfileSource = document.getElementById('user-profile-template').innerHTML,
-            userProfileTemplate = Handlebars.compile(userProfileSource),
-            userProfilePlaceholder = document.getElementById('user-profile');
-
-        var params = getHashParams();
-
-        var access_token = params.access_token,
-            state = params.state,
-            storedState = localStorage.getItem(stateKey);
-
-        if (access_token && (state == null || state !== storedState)) {
-          alert('There was an error during the authentication');
-        } else {
-          localStorage.removeItem(stateKey);
-          if (access_token) {
-            $.ajax({
-                url: 'https://api.spotify.com/v1/me',
-                headers: {
-                  'Authorization': 'Bearer ' + access_token
-                },
-                success: function(response) {
-                  userProfilePlaceholder.innerHTML = userProfileTemplate(response);
-                  const element = document.querySelector('.chatElement')
-
-  window.watsonAssistantChatOptions = {
-      integrationID: "98e929fb-81df-47e9-b8fe-f86c9d7cf722", // The ID of this integration.
-      region: "us-south", // The region your integration is hosted in.
-      serviceInstanceID: "f551a468-4c0f-490c-ab56-11e118020660", // The ID of your service instance.
-
-      onLoad: function(instance) { 
-        instance.on({ type: "pre:send", handler: preSendHandler });
-        instance.on({ type: "receive", handler: receiveHandler });
-        instance.render(); 
+        
+        })
       }
-  };
-  setTimeout(function(){
-    const t=document.createElement('script');
-    t.src="https://web-chat.global.assistant.watson.appdomain.cloud/loadWatsonAssistantChat.js";
-    document.head.appendChild(t);
-  });
 
-                  $('#login').hide();
-                  $('#loggedin').show();
-                }
-            });
-          } else {
-              $('#login').show();
-              $('#loggedin').hide();
-          }
- 
-          document.getElementById('login-button').addEventListener('click', function() {
-
-            var client_id = 'f4c692875fc546129664e90e720610a6'; // Your client id
-        var redirect_uri = 'http://localhost:8888/chat-bot.html'; // Your redirect uri
-
-            var state = generateRandomString(16);
-
-            localStorage.setItem(stateKey, state);
-            var scope = 'user-read-private user-read-email playlist-modify-public';
-
-            var url = 'https://accounts.spotify.com/authorize';
-            url += '?response_type=token';
-            url += '&client_id=' + encodeURIComponent(client_id);
-            url += '&scope=' + encodeURIComponent(scope);
-            url += '&redirect_uri=' + encodeURIComponent(redirect_uri);
-            url += '&state=' + encodeURIComponent(state);
-            window.location = url;
-      
-          }, false);
+      function preSendHandler(event){
+        var context_vars = event.data.context.skills['main skill'].user_defined; 
+        if(context_vars !== undefined && context_vars['playlist_name'] !== undefined){
+          console.log('need to clear');
+          event.data.context.skills['main skill'].user_defined = null; 
         }
-      })();
-    </script>
+      }
+
+      function receiveHandler(event){
+        var context_vars = event.data.context.skills['main skill'].user_defined;
+        console.log(context_vars)
+        if (context_vars !== undefined && context_vars['playlist_name'] !== undefined){
+          if(context_vars['genre'] !== undefined && context_vars['energy'] !== undefined && context_vars['valence'] !== undefined){
+            console.log(context_vars);
+            var params = context_vars;
+            makeSpotifyCalls(params);
+          }
+        }else{
+            console.log("can't do spotify thing");
+            console.log(context_vars);
+        }
+      }
+
+      var userProfileSource = document.getElementById('user-profile-template').innerHTML,
+          userProfileTemplate = Handlebars.compile(userProfileSource),
+          userProfilePlaceholder = document.getElementById('user-profile');
+
+      var params = getHashParams();
+
+      var access_token = params.access_token,
+          state = params.state,
+          storedState = localStorage.getItem(stateKey);
+
+      if (access_token && (state == null || state !== storedState)) {
+        alert('There was an error during the authentication');
+      } else {
+        localStorage.removeItem(stateKey);
+        if (access_token) {
+          $.ajax({
+            url: 'https://api.spotify.com/v1/me',
+            headers: {
+              'Authorization': 'Bearer ' + access_token
+            },
+            success: function(response) {
+              userProfilePlaceholder.innerHTML = userProfileTemplate(response);
+              const element = document.querySelector('.chatElement')
+
+              window.watsonAssistantChatOptions = {
+                  integrationID: "98e929fb-81df-47e9-b8fe-f86c9d7cf722", // The ID of this integration.
+                  region: "us-south", // The region your integration is hosted in.
+                  serviceInstanceID: "f551a468-4c0f-490c-ab56-11e118020660", // The ID of your service instance.
+
+                  // Provide the custom element.
+                  element: element,
+                  // Hide the close button since we want it always open.
+                  hideCloseButton: true,
+                  // Hide the default launcher.
+                  showLauncher: false,
+                  // Make the window open by default.
+                  openChatByDefault: true,
+                  
+                  onLoad: function(instance) { 
+                    instance.on({ type: "pre:send", handler: preSendHandler });
+                    instance.on({ type: "receive", handler: receiveHandler });
+                    instance.updateCSSVariables({
+                      '$font-size': 'large'
+                    });
+                    instance.render(); 
+                  }
+              };
+              setTimeout(function(){
+                const t=document.createElement('script');
+                t.src="https://web-chat.global.assistant.watson.appdomain.cloud/loadWatsonAssistantChat.js";
+                document.head.appendChild(t);
+              });
+
+              $('#login').hide();
+              $('#loggedin').show();
+            }
+          });
+        } else {
+          $('#login').show();
+          $('#loggedin').hide();
+        }
+
+        document.getElementById('login-button').addEventListener('click', function() {
+
+          var client_id = 'f4c692875fc546129664e90e720610a6'; // Your client id
+          var redirect_uri = 'http://localhost:8888/chat-bot.html'; // Your redirect uri
+
+          var state = generateRandomString(16);
+
+          localStorage.setItem(stateKey, state);
+          var scope = 'user-read-private user-read-email playlist-modify-public';
+
+          var url = 'https://accounts.spotify.com/authorize';
+          url += '?response_type=token';
+          url += '&client_id=' + encodeURIComponent(client_id);
+          url += '&scope=' + encodeURIComponent(scope);
+          url += '&redirect_uri=' + encodeURIComponent(redirect_uri);
+          url += '&state=' + encodeURIComponent(state);
+          window.location = url;
+    
+        }, false);
+      }
+    })();
+  </script>
 </body>
 </html>
