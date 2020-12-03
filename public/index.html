@@ -1,25 +1,112 @@
-<html>
-    <head>
-        <title>Music Xplorer</title>
-        <link rel="stylesheet" href="style.css">
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
-        <!-- Optional theme -->
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap-theme.min.css" integrity="sha384-6pzBo3FDv/PJ8r2KRkGHifhEocL+1X2rVCTTkUfGk7/0pbek5mMa1upzvWbrUbOZ" crossorigin="anonymous">
-        <script src="app.js"></script>
-    </head>
-    <body class="jumbotron">
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Music Xplorer</title>
 
-            <div class="container">
-                <h1>Welcome to Music Xplorer</h1>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+    </style>
+    <!-- Custom styles for this template -->
+    <link href="style.css" rel="stylesheet">
+  </head>
+  <body>
+    <header>
+  <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark page-nav">
+    <a class="navbar-brand" href="#">
+        <img src="/MX.svg" width="30" height="30" class="d-inline-block align-top" alt="">
+        Music Xplorer
+      </a>
+  </nav>
+</header>
+
+<main role="main">
+
+  <div id="myCarousel" class="carousel slide" data-ride="carousel">
+    <ol class="carousel-indicators">
+      <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+      <li data-target="#myCarousel" data-slide-to="1"></li>
+      <li data-target="#myCarousel" data-slide-to="2"></li>
+    </ol>
+    <div class="carousel-inner">
+      <div class="carousel-item active  ">
+        <svg class="bd-placeholder-img" width="100%" height="100%" xmlns="\music1.jpg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img">
+          
+          <rect width="100%" height="100%" fill="#C1C8E4"/>
+          <image xlink:href="\music1.jpg" class="center-block  d-block mx-auto" width="50%" height="50%" ></image>
+          
+        </svg>
+        <div class="container">
+          <div class="carousel-caption">
+            <h1>Welcome to Music Xplorer</h1>
                 <p>The #1 music playlist creation app. A quick chat with our chatbot will 
-                    allow you to have a curated playlist based on your mood, desired artist,
-                    album, decade, and more!
-                </p>
-                <p><a class="btn btn-primary btn-lg" href="\chat-bot.html" role="button">Start Chatting</a></p>
-            </div>      
-      
-     
-         <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous"></script>
-    </body>
+                  allow you to have a curated playlist based on your mood, desired artist,
+                  album, decade, and more!</p>
+                <p><a class="btn btn-lg btn-primary chat-btn" href="\chat-bot.html" role="button">Start Chatting</a></p>
+          </div>
+        </div>
+      </div>
+      <div class="carousel-item">
+        <svg class="bd-placeholder-img" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img">
+          <rect width="100%" height="100%" fill="#C1C8E4"/>
+          <image xlink:href="\head-phones.jpeg" class="center-block  d-block mx-auto" width="50%" height="50%" ></image>
+        </svg>
+        <div class="container">
+          <div class="carousel-caption">
+            <p>Create a playlist for free</p>
+            <p><a class="btn btn-lg btn-primary chat-btn" href="\chat-bot.html" role="button">Start Chatting</a></p>
+          </div>
+        </div>
+      </div>
+      <div class="carousel-item">
+        <svg class="bd-placeholder-img" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img">
+          <rect width="100%" height="100%" fill="#C1C8E4"/>
+          <image xlink:href="\music3.jpg" class="center-block  d-block mx-auto" width="50%" height="50%"></image>
+        </svg>
+        <div class="container">
+          <div class="carousel-caption">
+            <p> A 3 minute chat with an IBM Watson Assistant and you can have a playlist</p>
+                <p><a class="btn btn-lg btn-primary chat-btn" href="\chat-bot.html" role="button">Start Chatting</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <a class="carousel-control-prev" href="#myCarousel" role="button" data-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="sr-only">Previous</span>
+    </a>
+    <a class="carousel-control-next" href="#myCarousel" role="button" data-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="sr-only">Next</span>
+    </a>
+  </div>
+
+  </div><!-- /.container -->
+
+
+  <!-- FOOTER -->
+  <footer class="container">
+    <p>Music Xplorer Powered By <a href="https://www.ibm.com/us-en/">IBM Watson Assistant</a>.</p>
+  </footer>
+</main>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+      <script>window.jQuery || document.write('<script src="../assets/js/vendor/jquery.slim.min.js"><\/script>')</script><script src="../assets/dist/js/bootstrap.bundle.min.js"></script>
 </html>
